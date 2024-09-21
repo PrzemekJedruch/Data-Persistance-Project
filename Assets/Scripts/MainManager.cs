@@ -10,12 +10,12 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
+    public Text bestScoreText;
 
     private bool m_Started = false;
     private int m_Points;
 
-    private bool m_GameOver = false;
-
+    
     public Button restartButton;
     public Button backToMenuButton;
 
@@ -37,6 +37,7 @@ public class MainManager : MonoBehaviour
                 var brick = Instantiate(BrickPrefab, position, Quaternion.identity);
                 brick.PointValue = pointCountArray[i];
                 brick.onDestroyed.AddListener(AddPoint);
+                
             }
         }
 
@@ -49,6 +50,9 @@ public class MainManager : MonoBehaviour
 
     private void Update()
     {
+        MenuManager.Instance.BestScorePlayer(m_Points);
+        AddBestScoreText();
+       
         if (!m_Started)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -60,7 +64,9 @@ public class MainManager : MonoBehaviour
 
                 Ball.transform.SetParent(null);
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
+                
             }
+            
         }
        
     }
@@ -72,6 +78,7 @@ public class MainManager : MonoBehaviour
 
     public void BackToMenu()
     {
+       
         SceneManager.LoadScene(0);
     }
 
@@ -82,9 +89,15 @@ public class MainManager : MonoBehaviour
         ScoreText.text = $"Score : {m_Points}";
     }
 
+    void AddBestScoreText()
+    {
+        bestScoreText.text = $"Best Score :" +
+            $" {MenuManager.Instance.bestScoreName} : {MenuManager.Instance.bestScore}";
+    }
+
     public void GameOver()
     {
-        m_GameOver = true;
+       
         GameOverText.SetActive(true);
     }
 }
